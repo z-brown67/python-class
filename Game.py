@@ -1,4 +1,3 @@
-import pygame
 BLANK="_"
 BLACK="B"
 WHITE="W"
