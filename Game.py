@@ -41,6 +41,10 @@ class Grid:
         self.grid[loc.x][loc.y]=Piece(loc.x, loc.y, color)
     def get(self, loc):
         return self.grid[loc.x][loc.y]
+    def copy(self):
+        grid2=Grid()
+        grid2.grid=self.grid.copy()
+        return grid2
     def adjacent(self, loc):
         adjacent=[]
         adjs=loc.adj()
@@ -48,6 +52,10 @@ class Grid:
             if self.inGrid(i):
                 adjacent.append(self.get(i))
         return adjacent
+    def wouldChange(self, loc, color):
+        grid2=self.copy()
+        grid2.change(loc, color)
+        return grid2.updateBoard(loc, color)
     def isValidMove(self, loc, color):
         if not self.inGrid(loc):
             return False
@@ -71,8 +79,9 @@ class Grid:
                         return True
                     if not check.__contains__(x) and x.col==color:
                         check.append(x)
-        return False
+        return self.wouldChange(loc, color)
     def updateBoard(self, loc, color):
+        didChange=False
         adjs=self.adjacent(loc)
         opColor=BLACK
         if color==BLACK:
@@ -96,6 +105,8 @@ class Grid:
             if not doBreak:
                 for y in x:
                     self.change(y.location(), BLANK)
+                didChange=True
+        return didChange
     def __str__(self):
         out=""
         for i in range(len(self.grid)):
